@@ -1,0 +1,99 @@
+<html>
+<head>
+	<title></title>
+	<meta charset="utf-8">
+</head>
+<body>
+<div>
+	<canvas id="clock" width="500" height="500"></canvas>
+	<canvas id="text" width="500" height="500"></canvas>
+</div>
+<script type="text/javascript" src="http://code.jquery.com/jquery-2.1.4.min.js"></script>
+<script type="text/javascript">
+	var canvas = document.getElementById("clock");
+	var text = document.getElementById("text");
+	console.log(canvas.getContext);
+
+	var ctx = canvas.getContext('2d');
+	var text_ctx = text.getContext('2d');
+	function drawClock() {
+		//画圆和秒针刻度
+		ctx.lineWidth = 1;
+		for(var i = 0; i < 60; i++) {
+			ctx.beginPath();
+			//移到圆心
+			ctx.moveTo(250,250);
+			//绘弧
+			ctx.arc(250,250,150,6*i*Math.PI/180,6*(i+1)*Math.PI/180);
+			ctx.closePath();
+			ctx.stroke();
+		}
+		//画遮挡圆，因为半径还在
+		ctx.beginPath();
+		//填充颜色为白色
+		ctx.fillStyle = "#fff";
+		ctx.arc(250,250,140,0,Math.PI*2,true);
+		ctx.closePath();
+		ctx.fill();
+		//画时针格子
+		for(var i = 0; i < 12; i++) {
+			console.log((250+120*Math.cos(((-90+30*i)*Math.PI/180))) + "," + (250+120*(Math.sin((-90+30*i)*Math.PI/180))));
+			ctx.fillText(i+1,250+120*Math.cos(((-90+30*i)*Math.PI/180)),250+120*(Math.sin((-90+30*i)*Math.PI/180)));
+			ctx.beginPath();
+			ctx.fillText(i,250,250);
+			//移到圆心
+			ctx.moveTo(250,250);
+			//绘弧
+			ctx.arc(250,250,150,(-90+30*i)*Math.PI/180,(-90+30)*(i+1)*Math.PI/180);
+			ctx.closePath();
+			ctx.stroke();
+		}
+		//画遮挡圆，因为半径还在
+		ctx.beginPath();
+		//填充颜色为白色
+		ctx.fillStyle = "#fff";
+		ctx.arc(250,250,130,0,Math.PI*2,true);
+		ctx.closePath();
+		ctx.fill();
+		for (var i = 1; i < 13; i++) {
+			ctx.font="20px Georgia";
+			ctx.fillText(i+1,250,250);
+		}
+	}
+	function move() {
+		var date = new Date();
+		var hour = date.getHours();
+		var min = date.getMinutes();
+		var sec = date.getSeconds();
+		//秒针
+		ctx.lineWidth = 1;
+		ctx.beginPath();
+		ctx.moveTo(250,250);
+		ctx.arc(250,250,110,(-90+sec*6)*Math.PI/180,(-90+sec*6)*Math.PI/180,true);
+		ctx.closePath();
+		ctx.stroke();
+		//分针
+		ctx.lineWidth = 2;
+		ctx.beginPath();
+		ctx.moveTo(250,250);
+		ctx.arc(250,250,90,(-90+min*6)*Math.PI/180,(-90+min*6)*Math.PI/180,true);
+		ctx.closePath();
+		ctx.stroke();
+		//时针
+		ctx.lineWidth = 4;
+		ctx.beginPath();
+		ctx.moveTo(250,250);
+		ctx.arc(250,250,70,(-90+hour*30+min/2)*Math.PI/180,(-90+hour*30+min/2)*Math.PI/180,true);
+		ctx.closePath();
+		ctx.stroke();
+	}
+	drawClock();
+	setInterval(function() {
+		ctx.clearRect(0,0,canvas.width,canvas.height);
+		drawClock();
+		move();
+	},1000);
+	move();
+</script>
+</body>
+</html>
